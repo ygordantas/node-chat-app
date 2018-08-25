@@ -15,6 +15,18 @@ app.use(express.static(publicPath));
 io.on("connection", socket => {
   console.log("New user connected");
 
+  socket.emit("newMsg", {
+    from: "admin",
+    text: "welcome to the chat app",
+    createdAt: new Date().getTime()
+  });
+
+  socket.broadcast.emit("newMsg", {
+    from: "admin",
+    text: "New user just joined",
+    createdAt: new Date().getTime()
+  });
+
   socket.on("disconnect", () => {
     console.log("User disconnected");
   });
@@ -26,6 +38,12 @@ io.on("connection", socket => {
       text: msg.text,
       createdAt: new Date().getTime()
     });
+    /*
+    socket.broadcast.emit("newMsg", {
+      from: msg.from,
+      text: msg.text,
+      createdAt: new Date().getTime()
+    });*/
   });
 });
 
