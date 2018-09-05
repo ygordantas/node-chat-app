@@ -27,14 +27,15 @@ io.on("connection", socket => {
 
   socket.on("createMsg", (msg, callback) => {
     io.emit("newMsg", generateMsg(msg.from, msg.text));
-    callback("this is from the server");
+    callback();
   });
 
-  socket.on("createLocationMsg", coords => {
+  socket.on("createLocationMsg", (coords, callback) => {
     io.emit(
       "newLocationMsg",
       generateLocationMsg("Admin", coords.lat, coords.lon)
     );
+    callback();
   });
 });
 

@@ -2,7 +2,7 @@ const socket = io();
 
 /* DOM */
 const message = document.getElementById("message-form");
-const text = document.querySelector("[name=message]");
+const msgTextbox = document.querySelector("[name=message]");
 const messages = document.getElementById("messages");
 const locationBtn = document.getElementById("send-location");
 /* */
@@ -41,23 +41,36 @@ message.addEventListener("submit", e => {
     "createMsg",
     {
       from: "User",
-      text: text.value
+      text: msgTextbox.value
     },
-    () => {}
+    () => {
+      msgTextbox.value = "";
+    }
   );
 });
 
 locationBtn.addEventListener("click", () => {
   if ("geolocation" in navigator) {
+    locationBtn.setAttribute("disabled", "disabled");
+    locationBtn.textContent = "Sending Location...";
     navigator.geolocation.getCurrentPosition(
       position => {
-        socket.emit("createLocationMsg", {
-          lat: position.coords.latitude,
-          lon: position.coords.longitude
-        });
+        socket.emit(
+          "createLocationMsg",
+          {
+            lat: position.coords.latitude,
+            lon: position.coords.longitude
+          },
+          () => {
+            locationBtn.removeAttribute("disabled");
+            locationBtn.textContent = "Send Location";
+          }
+        );
       },
       err => {
         alert("Unable to fetch location");
+        locationBtn.removeAttribute("disabled");
+        locationBtn.textContent = "Send Location";
       }
     );
   } else {
