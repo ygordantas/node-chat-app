@@ -16,25 +16,27 @@ socket.on("disconnect", () => {
 });
 
 socket.on("newMsg", msg => {
+  let formattedTime = moment(msg.createdAt).format("h:mm a");
   let li = document.createElement("li");
-  li.textContent = `${msg.from}: ${msg.text}`;
+  li.textContent = `${msg.from} @ ${formattedTime} : ${msg.text}`;
   messages.appendChild(li);
 });
 
 socket.on("newLocationMsg", msg => {
+  let formattedTime = moment(msg.createdAt).format("h:mm a");
   let li = document.createElement("li");
   let a = document.createElement("a");
 
   a.href = msg.url;
   a.target = "_blank";
   a.textContent = "current location";
-  li.textContent = `${msg.from}: `;
+  li.textContent = `${msg.from} @ ${formattedTime} : `;
 
   li.appendChild(a);
   messages.appendChild(li);
 });
 
-/* DOM Event listeners  */
+/* Event listeners  */
 message.addEventListener("submit", e => {
   e.preventDefault();
   socket.emit(
