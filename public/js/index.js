@@ -8,6 +8,28 @@ const locationBtn = document.getElementById("send-location");
 
 /* */
 
+function scrollToBottom() {
+  // Selectors
+  let newMsg = messages.lastElementChild;
+  let prevMsg = newMsg.previousElementSibling;
+
+  // Heights
+  let { clientHeight } = messages;
+  let { scrollTop } = messages;
+  let { scrollHeight } = messages;
+
+  let newMsgStyle = window.getComputedStyle(newMsg);
+  let newMsgHeight = parseInt(newMsgStyle.getPropertyValue("height"));
+  let lastMsgHeight = 0;
+  if (prevMsg) {
+    let lastMsgStyle = window.getComputedStyle(prevMsg);
+    lastMsgHeight = parseInt(lastMsgStyle.getPropertyValue("height"));
+  }
+  if (clientHeight + scrollTop + newMsgHeight + lastMsgHeight >= scrollHeight) {
+    messages.scrollTop = scrollHeight;
+  }
+}
+
 socket.on("connect", () => {
   console.log("Connected to the server");
 });
@@ -25,6 +47,7 @@ socket.on("newMsg", msg => {
     createdAt: formattedTime
   });
   messages.innerHTML += html;
+  scrollToBottom();
 });
 
 socket.on("newLocationMsg", msg => {
@@ -36,6 +59,7 @@ socket.on("newLocationMsg", msg => {
     createdAt: formattedTime
   });
   messages.innerHTML += html;
+  scrollToBottom();
 });
 
 /* Event listeners  */
