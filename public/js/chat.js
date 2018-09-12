@@ -1,12 +1,26 @@
 const socket = io();
 
+// Utility function (Extract query parameters from uri in form of Object)
+function deparam(uri) {
+  if (uri === undefined) {
+    uri = window.location.search;
+  }
+
+  let queryString = {};
+
+  uri.replace(new RegExp("([^?=&]+)(=([^&#]*))?", "g"), ($0, $1, $2, $3) => {
+    queryString[$1] = decodeURIComponent($3.replace(/\+/g, "%20"));
+  });
+  return queryString;
+}
+// ---
+
 /* DOM */
 const message = document.getElementById("message-form");
 const msgTextbox = document.querySelector("[name=message]");
 const messages = document.getElementById("messages");
 const locationBtn = document.getElementById("send-location");
-
-/* */
+/**/
 
 function scrollToBottom() {
   // Selectors
@@ -31,11 +45,33 @@ function scrollToBottom() {
 }
 
 socket.on("connect", () => {
-  console.log("Connected to the server");
+  let params = deparam(window.location.search);
+
+  socket.emit("join", params, err => {
+    if (err) {
+      alert(err);
+      window.location.href = "/";
+    } else {
+      console.log("No error");
+    }
+  });
 });
 
 socket.on("disconnect", () => {
   console.log("Disconnected from server");
+});
+
+socket.on("updateUserList", users => {
+  const ol = document.createElement("ol");
+
+  users.forEach(user => {
+    let li = document.createElement("li");
+    li.textContent = user;
+    ol.appendChild(li);
+
+    document.getElementById("users").innerHTML = "";
+    document.getElementById("users").appendChild(ol);
+  });
 });
 
 socket.on("newMsg", msg => {
@@ -105,4 +141,4 @@ locationBtn.addEventListener("click", () => {
     return alert("Geolocation not supported by your browser");
   }
 });
-/* */
+/**/
