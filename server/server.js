@@ -50,15 +50,21 @@ io.on("connection", socket => {
   });
 
   socket.on("createMsg", (msg, callback) => {
-    io.emit("newMsg", generateMsg(msg.from, msg.text));
+    const user = users.getUser(socket.id);
+    if (user && isRealString(msg.text)) {
+      io.to(user.room).emit("newMsg", generateMsg(user.name, msg.text));
+    }
     callback();
   });
 
   socket.on("createLocationMsg", (coords, callback) => {
-    io.emit(
-      "newLocationMsg",
-      generateLocationMsg("Admin", coords.lat, coords.lon)
-    );
+    const user = users.getUser(socket.id);
+    if (user) {
+      io.to(user.room).emit(
+        "newLocationMsg",
+        generateLocationMsg(user.name, coords.lat, coords.lon)
+      );
+    }
     callback();
   });
 });

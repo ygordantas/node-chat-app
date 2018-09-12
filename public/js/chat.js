@@ -51,15 +51,11 @@ socket.on("connect", () => {
     if (err) {
       alert(err);
       window.location.href = "/";
-    } else {
-      console.log("No error");
     }
   });
 });
 
-socket.on("disconnect", () => {
-  console.log("Disconnected from server");
-});
+socket.on("disconnect", () => {});
 
 socket.on("updateUserList", users => {
   const ol = document.createElement("ol");
@@ -104,7 +100,6 @@ message.addEventListener("submit", e => {
   socket.emit(
     "createMsg",
     {
-      from: "User",
       text: msgTextbox.value
     },
     () => {
