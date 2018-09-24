@@ -4,7 +4,7 @@ const express = require("express");
 const socketIO = require("socket.io");
 
 const { generateMsg, generateLocationMsg } = require("./utils/msg");
-const { isRealString } = require("./utils/validation");
+const { isRealString, isUniqueUsername } = require("./utils/validation");
 const { Users } = require("./utils/users");
 
 const publicPath = path.join(__dirname, "../public");
@@ -18,27 +18,18 @@ const users = new Users();
 app.use(express.static(publicPath));
 
 io.on("connection", socket => {
+  socket.emit("fetchRooms", users.getRoomsList());
   socket.on("join", (params, callback) => {
     if (!isRealString(params.name) || !isRealString(params.room)) {
       return callback("Name and room name are required");
     }
-    // Make sure room name is case insensitive
+    // Converting room name to be case insensitive
     params.room = params.room.toUpperCase();
     //--
 
-    // Make sure all users names are unique and case insensitive
-    const usersList = users.getUserList(params.room);
-    if (usersList.length > 0) {
-      const userNameCaseInsensitive = params.name.toUpperCase();
-      const usernames = usersList.map(username => username.toUpperCase());
-      const isUniqueUserName = usernames.find(
-        username => username === userNameCaseInsensitive
-      );
-      if (isUniqueUserName) {
-        return callback("Username must be unique");
-      }
+    if (!users.isUniqueUsername(params.room, params.name)) {
+      return callback("Username must be unique");
     }
-    // ----
 
     socket.join(params.room);
     users.removeUser(socket.id);

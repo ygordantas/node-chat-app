@@ -25,6 +25,31 @@ class Users {
     const namesArr = users.map(user => user.name);
     return namesArr;
   }
+
+  isUniqueUsername(room, name) {
+    const usersList = this.getUserList(room);
+    if (usersList.length > 0) {
+      const userNameCaseInsensitive = name.toUpperCase();
+      const usernames = usersList.map(username => username.toUpperCase());
+      const isUnique = usernames.find(
+        username => userNameCaseInsensitive === username
+      );
+      if (isUnique) {
+        return false;
+      }
+      return true;
+    }
+    return true;
+  }
+  getRoomsList() {
+    const rooms = [];
+    this.users.forEach(user => {
+      if (!rooms.includes(user.room)) {
+        rooms.push(user.room);
+      }
+    });
+    return rooms;
+  }
 }
 
 module.exports = { Users };

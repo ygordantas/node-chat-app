@@ -66,4 +66,19 @@ describe("Users class", () => {
     expect(res).toHaveLength(1);
     expect(res).toContain("jean");
   });
+  it("Should return false if username already exist in the selected room", () => {
+    const res = users.isUniqueUsername("node course", "mike");
+    expect(res).toBeFalsy();
+  });
+  it("Should return true if username is unique in the selected room", () => {
+    const res = users.isUniqueUsername("node course", "Ygor");
+    expect(res).toBeTruthy();
+  });
+  it("Should return an array containing all the active groups", () => {
+    const res = users.getRoomsList();
+    expect(Array.isArray(res)).toBeTruthy();
+    expect(res).toHaveLength(2);
+    expect(res).toContain("node course");
+    expect(res).toContain("react course");
+  });
 });

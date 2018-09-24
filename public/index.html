@@ -17,17 +17,29 @@
             </div>
             <div class="form-field">
                 <label for="">Display name</label>
-                <input type="text" name="name" autofocus>
+                <input autofocus autocomplete="off" type="text" name="name" autofocus>
             </div>
             <div class="form-field">
-                <label for="">Room name</label>
-                <input type="text" name="room">
+                <label for="">Join an active room</label>
+                <select id='dropdown' for="" onchange="selectRoom(event)">
+                    <option disabled selected>List of active rooms</option>
+                </select>
+            </div>
+            <div class="form-field">
+                <label for="">Create a new room or type a name of active room to join</label>
+                <input id="room-name-input" autocomplete="off" type="text" name="room">
             </div>
             <div class="form-field">
                 <button>Join</button>
             </div>
         </form>
     </div>
+    <script id="select-box-template" type="text/template">
+        <option value="{{room}}">{{room}}</option>
+    </script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="./js/libs/mustache.js"></script>
+    <script src="./js/index.js"></script>
 </body>
 
 </html>
